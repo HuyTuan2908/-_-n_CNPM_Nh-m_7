@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đồ án CNPM — Quản lý cuộc họp</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <script>
+  // Nếu chưa đăng nhập thì quay về login.html
+  if (localStorage.getItem("isLogin") !== "true") {
+    window.location.replace("login.html");
+  }
+</script>
+
+<div class="bg-decor" aria-hidden="true"></div>
+
+<div class="app-shell" id="app-shell">
+
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="logo-mark small"><span class="logo-icon">◆</span></div>
+      <div>
+        <p class="brand-name">Đồ án CNPM</p>
+        <p class="brand-sub">Công nghệ phần mềm</p>
+      </div>
+    </div>
+
+    <p class="menu-label">Menu chính</p>
+    <nav class="menu" id="menu">
+      <button class="menu-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span>Tổng quan</span>
+      </button>
+
+      <button class="menu-item has-sub" id="meetings-toggle">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+        <span>Cuộc họp</span>
+        <svg class="chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <div class="submenu" id="meetings-submenu">
+        <button class="submenu-item" data-view="equipment-view">
+  <svg viewBox="0 0 24 24">
+    <path d="M4 5h16v10H4z"/>
+    <path d="M8 19h8M12 15v4"/>
+  </svg>
+  Trang thiết bị
+</button>
+        <button class="submenu-item" data-view="schedule-view">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+          Xem lịch họp
+        </button>
+        <button class="submenu-item" data-view="schedule-filter">
+          <svg viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></svg>
+          Lọc lịch họp
+        </button>
+        <button class="submenu-item" data-view="schedule-create">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v6M9 17h6"/></svg>
+          Tạo lịch họp
+        </button>
+        <button class="submenu-item" data-view="meeting-list">
+          <svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1.4"/><circle cx="5" cy="12" r="1.4"/><circle cx="5" cy="17" r="1.4"/><path d="M10 7h10M10 12h10M10 17h10"/></svg>
+          Danh sách cuộc họp
+        </button>
+      </div>
+
+      <button class="menu-item" data-view="members-view">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><circle cx="17" cy="9" r="2.6"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6M14.5 14.3c2.6.3 4.5 2.3 4.5 5.7"/></svg>
+        <span>Thành viên</span>
+      </button>
+      <button class="menu-item" data-view="documents-view">
+        <svg viewBox="0 0 24 24"><path d="M6 3h9l5 5v13a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5M8 13h8M8 17h8"/></svg>
+        <span>Tài liệu</span>
+      </button>
+      <button class="menu-item" data-view="placeholder" data-title="Cài đặt">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1-1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1h.1a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>
+        <span>Cài đặt</span>
+      </button>
+    </nav>
+    <button
+  class="menu-item"
+  id="logout-btn"
+  type="button"
+  style="margin-top: auto;"
+>
+  <svg viewBox="0 0 24 24">
+    <path d="M10 17l5-5-5-5"/>
+    <path d="M15 12H3"/>
+    <path d="M13 3h7a1 1 0 011 1v16a1 1 0 01-1 1h-7"/>
+  </svg>
+
+  <span>Đăng xuất</span>
+</button>
+
+    <button class="sidebar-user" id="open-profile">
+      <span class="avatar" id="side-avatar">AD</span>
+      <span class="sidebar-user-text">
+        <span class="name" id="side-name">Admin</span>
+        <span class="role" id="side-role">Quản lý</span>
+      </span>
+      <svg class="edit-hint" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+    </button>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn only-mobile" id="burger" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <div>
+        <p class="topbar-title" id="topbar-title">Tổng quan</p>
+        <p class="topbar-sub" id="topbar-sub">Thứ Năm, 02 tháng 7 năm 2026</p>
+      </div>
+      <div class="topbar-right" style="position: relative;">
+        <button class="icon-btn" id="notif-btn" aria-label="Thông báo">
+          <svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 00-5 5v3.4c0 .6-.2 1.2-.6 1.7L5 15h14l-1.4-1.9c-.4-.5-.6-1.1-.6-1.7V8a5 5 0 00-5-5z"/><path d="M9.5 18a2.5 2.5 0 005 0"/></svg>
+          <span class="dot" id="notif-dot"></span>
+        </button>
+        <button class="avatar-btn" id="open-profile-2">MT</button>
+
+        <div class="panel notif-dropdown" id="notif-dropdown" hidden style="position: absolute; top: 50px; right: 0; width: 320px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
+          <div class="panel-head" style="padding: 10px 15px;">
+            <span>Thông báo nhanh</span>
+            <button class="link-btn" id="notif-clear-btn" style="font-size: 12px;">Đọc tất cả</button>
+          </div>
+          <ul class="notif-list" id="notif-dropdown-list" style="max-height: 250px; overflow-y: auto; padding: 10px 15px; margin: 0; list-style: none;">
+            </ul>
+        </div>
+      </div>
+    </header>
+
+    <div class="content" id="content">
+      <section class="view" data-view="equipment-view">
+  <div class="view-head" style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <h2>Quản lý trang thiết bị</h2>
+      <p>Theo dõi thiết bị phục vụ cuộc họp</p>
+    </div>
+
+    <button class="btn btn-primary" id="btn-add-equipment">
+      + Thêm thiết bị
+    </button>
+  </div>
+
+  <div class="panel" style="padding:15px;">
+    <div class="list-full" id="equipment-list"></div>
+  </div>
+</section>
+<div class="modal" id="modal-add-equipment" role="dialog" aria-modal="true">
+  <div class="modal-head">
+    <span class="icon-chip">
+      <svg viewBox="0 0 24 24">
+        <path d="M4 5h16v10H4z"/>
+        <path d="M8 19h8M12 15v4"/>
+      </svg>
+    </span>
+
+    <h3>Thêm thiết bị</h3>
+
+    <button class="modal-x" data-close-modal>&times;</button>
+  </div>
+
+  <form id="form-add-equipment">
+    <label class="field">
+      <span>Tên thiết bị</span>
+      <input type="text" id="equipment-name" placeholder="Máy chiếu" required>
+    </label>
+
+    <label class="field">
+      <span>Số lượng</span>
+      <input type="number" id="equipment-quantity" placeholder="1" min="1" required>
+    </label>
+
+    <label class="field">
+      <span>Trạng thái</span>
+      <select id="equipment-status" required>
+        <option value="Sẵn sàng">Sẵn sàng</option>
+        <option value="Đang sử dụng">Đang sử dụng</option>
+        <option value="Bảo trì">Bảo trì</option>
+      </select>
+    </label>
+
+    <button type="submit" class="btn btn-primary btn-block">
+      Thêm thiết bị
+    </button>
+  </form>
+</div>
+
+      <section class="view active" data-view="dashboard">
+        <div class="greet">
+          <h2>Chào buổi sáng, <span id="greet-name">Minh Tuấn</span>! <span class="wave">👋</span></h2>
+          <p id="greet-sub">Bạn có 4 cuộc họp hôm nay và 2 thông báo mới.</p>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <span class="stat-icon purple"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M21 9l-5 3 5 3z"/></svg></span>
+            <p class="stat-num" data-count="4" id="stat-meetings">0</p>
+            <p class="stat-label">Cuộc họp hôm nay</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon danger"><svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 00-5 5v3.4c0 .6-.2 1.2-.6 1.7L5 15h14l-1.4-1.9c-.4-.5-.6-1.1-.6-1.7V8a5 5 0 00-5-5z"/></svg></span>
+            <p class="stat-num" data-count="2" id="stat-notifs">0</p>
+            <p class="stat-label">Thông báo mới</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon success"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><circle cx="17" cy="9" r="2.6"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"/></svg></span>
+            <p class="stat-num" data-count="6" id="stat-members">0</p>
+            <p class="stat-label">Thành viên nhóm</p>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon warning"><svg viewBox="0 0 24 24"><path d="M6 3h9l5 5v13a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5M8 13h8M8 17h8"/></svg></span>
+            <p class="stat-num" data-count="4" id="stat-docs">0</p>
+            <p class="stat-label">Tài liệu mới</p>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-head">
+              <span><svg class="pi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Lịch họp hôm nay</span>
+              <button class="link-btn" data-view-jump="meeting-list">Xem tất cả ›</button>
+            </div>
+            <div class="mini-list" id="today-list"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <span><svg class="pi" viewBox="0 0 24 24"><path d="M12 3a5 5 0 00-5 5v3.4c0 .6-.2 1.2-.6 1.7L5 15h14l-1.4-1.9c-.4-.5-.6-1.1-.6-1.7V8a5 5 0 00-5-5z"/></svg>Thông báo</span>
+              <button class="link-btn" id="mark-read">Đánh dấu đọc</button>
+            </div>
+            <ul class="notif-list" id="notif-list">
+              </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="schedule-view">
+        <div class="view-head"><h2>Xem lịch họp</h2><p>Xem toàn bộ lịch theo tháng</p></div>
+        <div class="calendar-card">
+          <div class="cal-nav">
+            <button class="icon-btn sm" id="cal-prev">‹</button>
+            <p id="cal-month">Tháng 7, 2026</p>
+            <button class="icon-btn sm" id="cal-next">›</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="cal-day-list" id="cal-day-list"></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="schedule-filter">
+        <div class="view-head"><h2>Lọc lịch họp</h2><p>Thu hẹp danh sách theo tiêu chí</p></div>
+        <div class="filter-layout">
+          <form class="panel filter-form" id="filter-form">
+            <label class="field">
+              <span>Khoảng thời gian</span>
+              <select name="range">
+                <option value="week">Tuần này</option>
+                <option value="month" selected>Tháng này</option>
+                <option value="all">Tất cả</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Phòng họp</span>
+              <select name="room">
+                <option value="all">Tất cả phòng</option>
+                <option value="P.101">P.101</option>
+                <option value="P.102">P.102</option>
+                <option value="P.203">P.203</option>
+                <option value="P.105">P.105</option>
+                <option value="P.301">P.301</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Trạng thái</span>
+              <select name="status">
+                <option value="all">Tất cả</option>
+                <option value="upcoming">Sắp diễn ra</option>
+                <option value="ongoing">Đang diễn ra</option>
+                <option value="ended">Đã kết thúc</option>
+                <option value="cancelled">Đã hủy</option>
+              </select>
+            </label>
+            <button type="submit" class="btn btn-primary btn-block">Áp dụng bộ lọc</button>
+          </form>
+          <div class="panel">
+            <div class="panel-head"><span>Kết quả</span><span class="muted" id="filter-count">0 cuộc họp</span></div>
+            <div class="mini-list" id="filter-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="schedule-create">
+        <div class="view-head"><h2>Tạo lịch họp</h2><p>Điền thông tin để đặt lịch mới</p></div>
+        <form class="panel create-form" id="create-form">
+          <label class="field">
+            <span>Tiêu đề cuộc họp</span>
+            <input type="text" name="title" placeholder="Họp kế hoạch quý 3" required>
+          </label>
+          <label class="field">
+            <span>Mô tả</span>
+            <textarea name="description" rows="3" placeholder="Nội dung, mục tiêu cuộc họp..."></textarea>
+          </label>
+
+          <div class="field">
+            <span>Phòng họp</span>
+            <div class="room-slider" data-room-slider>
+              <button type="button" class="room-arrow" data-room-scroll="-1" aria-label="Trước">‹</button>
+              <div class="room-track">
+                <button type="button" class="room-pill active" data-room="P.101">
+                  <strong>P.101</strong><small>8 người · Tầng 1</small>
+                </button>
+                <button type="button" class="room-pill" data-room="P.102">
+                  <strong>P.102</strong><small>6 người · Tầng 1</small>
+                </button>
+                <button type="button" class="room-pill" data-room="P.203">
+                  <strong>P.203</strong><small>12 người · Tầng 2</small>
+                </button>
+                <button type="button" class="room-pill" data-room="P.105">
+                  <strong>P.105</strong><small>4 người · Tầng 1</small>
+                </button>
+                <button type="button" class="room-pill" data-room="P.301">
+                  <strong>P.301</strong><small>20 người · Tầng 3</small>
+                </button>
+              </div>
+              <button type="button" class="room-arrow" data-room-scroll="1" aria-label="Sau">›</button>
+            </div>
+            <input type="hidden" name="room" value="P.101">
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span>Ngày</span>
+              <input type="date" name="date" value="2026-07-06" required>
+            </label>
+            <label class="field">
+              <span>Giờ bắt đầu</span>
+              <select name="start" class="time-select" data-time-select></select>
+            </label>
+            <label class="field">
+              <span>Giờ kết thúc</span>
+              <select name="end" class="time-select" data-time-select></select>
+            </label>
+          </div>
+
+          <div class="field">
+            <span>Người tham gia</span>
+            <div class="multiselect" data-multiselect id="create-participants-multi">
+              <button type="button" class="multiselect-box">
+                <div class="chips" data-chips><span class="chip-placeholder">Chọn người tham gia</span></div>
+                <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <div class="multiselect-panel" data-panel id="create-participants-panel">
+                </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <span>Tài liệu đính kèm</span>
+            <div class="multiselect" data-multiselect id="create-docs-multi">
+              <button type="button" class="multiselect-box">
+                <div class="chips" data-chips><span class="chip-placeholder">Chọn tài liệu đính kèm</span></div>
+                <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <div class="multiselect-panel" data-panel id="create-docs-panel">
+                </div>
+            </div>
+          </div>
+
+          <div class="field meeting-equipment-field">
+            <span>Trang thiết bị</span>
+            <div class="meeting-equipment-grid" id="create-equipment-list">
+              <!-- Danh sách thiết bị được tạo tự động từ mục Quản lý trang thiết bị -->
+            </div>
+            <small class="equipment-help">Có thể chọn nhiều thiết bị cho cuộc họp.</small>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            <span class="btn-label">Tạo lịch họp</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+      </section>
+
+      <section class="view" data-view="meeting-list">
+        <div class="view-head"><h2>Danh sách cuộc họp</h2><p>Quản lý toàn bộ cuộc họp của bạn</p></div>
+        <div class="status-legend">
+          <span><i class="dot-leg upcoming"></i>Sắp diễn ra</span>
+          <span><i class="dot-leg ongoing"></i>Đang diễn ra</span>
+          <span><i class="dot-leg ended"></i>Đã kết thúc</span>
+          <span><i class="dot-leg cancelled"></i>Đã hủy</span>
+        </div>
+
+        <div class="meeting-tools panel">
+          <div class="meeting-search-wrap">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+            <input
+              type="search"
+              id="meeting-search"
+              placeholder="Tìm theo tên, mô tả, phòng họp..."
+              autocomplete="off"
+            >
+            <button type="button" class="search-clear" id="meeting-search-clear" aria-label="Xóa tìm kiếm" hidden>×</button>
+          </div>
+
+          <label class="meeting-sort-wrap">
+            <span>Sắp xếp</span>
+            <select id="meeting-sort" aria-label="Sắp xếp lịch họp">
+              <option value="newest">Mới nhất trước</option>
+              <option value="oldest">Cũ nhất trước</option>
+            </select>
+          </label>
+
+          <div class="conflict-note" title="Hệ thống sẽ kiểm tra trùng phòng hoặc trùng người tham gia khi tạo và sửa cuộc họp">
+            <span class="conflict-note-icon">✓</span>
+            <span>Tự động tránh trùng lịch</span>
+          </div>
+        </div>
+
+        <div class="meeting-result-bar">
+          <span id="meeting-result-count">0 cuộc họp</span>
+          <span class="meeting-result-hint">Tìm kiếm và sắp xếp được cập nhật tức thì</span>
+        </div>
+
+        <div class="panel meeting-list-panel">
+          <div class="list-full" id="full-list"></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="members-view">
+        <div class="view-head" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2>Quản lý thành viên</h2>
+            <p>Xem danh sách và thêm thành viên mới vào tổ chức</p>
+          </div>
+          <button class="btn btn-primary" id="btn-add-member">+ Thêm thành viên</button>
+        </div>
+        <div class="panel" style="padding: 15px;">
+          <div class="list-full" id="members-list">
+            </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="documents-view">
+        <div class="view-head" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2>Quản lý tài liệu</h2>
+            <p>Kho lưu trữ và chia sẻ tài liệu nội bộ</p>
+          </div>
+          <button class="btn btn-primary" id="btn-add-doc">+ Thêm tài liệu</button>
+        </div>
+        <div class="panel" style="padding: 15px;">
+          <div class="list-full" id="documents-list">
+            </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="placeholder">
+        <div class="empty-state">
+          <span class="icon-chip big"><svg viewBox="0 0 24 24"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <h2 id="placeholder-title">Đang phát triển</h2>
+          <p>Tính năng này sẽ sớm ra mắt trong bản cập nhật tiếp theo.</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop">
+
+  <div class="modal" id="modal-profile" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="icon-chip"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span>
+      <h3>Cập nhật thông tin</h3>
+      <button class="modal-x" data-close-modal>&times;</button>
+    </div>
+    <form id="form-profile">
+      <div class="avatar-edit"><span class="avatar big" id="profile-avatar-display">MT</span></div>
+      <label class="field"><span>Họ và tên</span><input type="text" id="profile-name" value="Minh Tuấn" required></label>
+      <label class="field"><span>Email</span><input type="email" id="profile-email" value="admin" placeholder="name@company.com" required></label>
+      <label class="field"><span>Số điện thoại</span><input type="text" id="profile-phone" value="0901 234 567"></label>
+      <label class="field">
+        <span>Chức vụ</span>
+        <select id="profile-role" required style="width:100%; padding:10px; border:1px solid var(--border); border-radius:8px; background:#fff; font-family:inherit;">
+          <option value="Nhân viên">Nhân viên</option>
+          <option value="Quản lý">Quản lý</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </label>
+      <button type="submit" class="btn btn-primary btn-block">Lưu thông tin</button>
+    </form>
+  </div>
+
+  <div class="modal" id="modal-add-member" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="icon-chip"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"/></svg></span>
+      <h3>Thêm thành viên</h3>
+      <button class="modal-x" data-close-modal>&times;</button>
+    </div>
+    <form id="form-add-member">
+      <label class="field"><span>Họ và tên</span><input type="text" id="member-name" placeholder="Nguyễn Văn A" required></label>
+      <label class="field">
+        <span>Chức vụ</span>
+        <select id="member-role" required style="width:100%; padding:10px; border:1px solid var(--border); border-radius:8px; background:#fff; font-family:inherit;">
+          <option value="Nhân viên" selected>Nhân viên</option>
+          <option value="Quản lý">Quản lý</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </label>
+      <label class="field"><span>Email</span><input type="email" id="member-email" placeholder="a.nguyen@company.com" required></label>
+      <button type="submit" class="btn btn-primary btn-block">Tạo thành viên</button>
+    </form>
+  </div>
+
+  <div class="modal" id="modal-add-doc" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="icon-chip"><svg viewBox="0 0 24 24"><path d="M6 3h9l5 5v13a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"/></svg></span>
+      <h3>Thêm tài liệu mới</h3>
+      <button class="modal-x" data-close-modal>&times;</button>
+    </div>
+    <form id="form-add-doc">
+  <label class="field">
+    <span>Chọn tài liệu từ máy</span>
+    <input type="file" id="doc-file" multiple required>
+  </label>
+
+  <button type="submit" class="btn btn-primary btn-block">
+    Thêm tài liệu
+  </button>
+</form>
+  </div>
+
+  <div class="modal modal-lg" id="modal-edit" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="icon-chip"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span>
+      <h3>Sửa cuộc họp</h3>
+      <button class="modal-x" data-close-modal>&times;</button>
+    </div>
+    <form id="form-edit">
+      <label class="field"><span>Tiêu đề cuộc họp</span><input type="text" id="edit-title" required></label>
+      <label class="field"><span>Mô tả</span><textarea id="edit-description" rows="3" placeholder="Nội dung, mục tiêu cuộc họp..."></textarea></label>
+
+      <div class="field">
+        <span>Phòng họp</span>
+        <div class="room-slider" data-room-slider>
+          <button type="button" class="room-arrow" data-room-scroll="-1" aria-label="Trước">‹</button>
+          <div class="room-track">
+            <button type="button" class="room-pill" data-room="P.101"><strong>P.101</strong><small>8 người · Tầng 1</small></button>
+            <button type="button" class="room-pill" data-room="P.102"><strong>P.102</strong><small>6 người · Tầng 1</small></button>
+            <button type="button" class="room-pill" data-room="P.203"><strong>P.203</strong><small>12 người · Tầng 2</small></button>
+            <button type="button" class="room-pill" data-room="P.105"><strong>P.105</strong><small>4 người · Tầng 1</small></button>
+            <button type="button" class="room-pill" data-room="P.301"><strong>P.301</strong><small>20 người · Tầng 3</small></button>
+          </div>
+          <button type="button" class="room-arrow" data-room-scroll="1" aria-label="Sau">›</button>
+        </div>
+        <input type="hidden" id="edit-room" value="P.203">
+      </div>
+
+      <div class="field-row">
+        <label class="field"><span>Ngày</span><input type="date" id="edit-date"></label>
+        <label class="field"><span>Giờ bắt đầu</span><select id="edit-start" class="time-select" data-time-select></select></label>
+        <label class="field"><span>Giờ kết thúc</span><select id="edit-end" class="time-select" data-time-select></select></label>
+      </div>
+
+      <div class="field">
+        <span>Người tham gia</span>
+        <div class="multiselect" data-multiselect id="edit-participants-multi">
+          <button type="button" class="multiselect-box">
+            <div class="chips" data-chips><span class="chip-placeholder">Chọn người tham gia</span></div>
+            <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="multiselect-panel" data-panel id="edit-participants-panel">
+            </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <span>Tài liệu đính kèm</span>
+        <div class="multiselect" data-multiselect id="edit-docs-multi">
+          <button type="button" class="multiselect-box">
+            <div class="chips" data-chips><span class="chip-placeholder">Chọn tài liệu đính kèm</span></div>
+            <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="multiselect-panel" data-panel id="edit-docs-panel">
+            </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn" data-close-modal>Hủy bỏ</button>
+        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal modal-sm" id="modal-cancel" role="dialog" aria-modal="true">
+    <div class="modal-icon danger"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div>
+    <h3>Hủy cuộc họp?</h3>
+    <p id="cancel-text">Cuộc họp sẽ bị hủy và người tham gia sẽ được thông báo.</p>
+    <div class="modal-actions center">
+      <button class="btn" data-close-modal>Không</button>
+      <button class="btn btn-danger" id="confirm-cancel-btn">Hủy cuộc họp</button>
+    </div>
+  </div>
+
+  <div class="modal modal-sm" id="modal-join" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="icon-chip"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+      <h3>Tham gia cuộc họp</h3>
+      <button class="modal-x" data-close-modal>&times;</button>
+    </div>
+    <div class="meeting-preview">
+      <p class="mp-title" id="join-title">Họp kế hoạch quý 3</p>
+      <p><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span id="join-date">Th6, 03/07/2026</span></p>
+      <p><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="join-time">09:00 - 10:30</span></p>
+      <p><svg viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span id="join-room">Phòng 101</span></p>
+    </div>
+    <p class="ask-line">Bạn có tham gia cuộc họp này không?</p>
+    <div class="modal-actions">
+      <button class="btn btn-decline" id="decline-join-btn" type="button">Từ chối</button>
+      <button class="btn btn-success" id="confirm-join-btn">Tham gia</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast-stack" id="toast-stack"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
